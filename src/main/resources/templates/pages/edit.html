@@ -5,25 +5,25 @@
 <nav th:replace="fragments :: navigation"></nav>
 <h1 th:text="${title}">Default Title</h1>
 
-<form method="post" style="max-width:600px;" enctype="multipart/form-data">
+<form method="post" style="max-width:600px;" enctype="multipart/form-data" action="/edit">
     <div class="form-group">
         <label th:for="title">Title:</label>
-        <input class="form-control" id="title" name="title"/>
+        <input class="form-control" id="title" name="title" th:value="${thePost.getTitle()}"/>
     </div>
     <div class="form-group">
         <label th:for="description">Description:</label>
-        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+        <textarea class="form-control" id="description" name="description" rows="3" th:text="${thePost.getDescription()}"></textarea>
     </div>
     <div class="form-group">
         <label th:for="snippet">Snippet:</label>
-        <input class="form-control" id="snippet" name="snippet"/>
+        <input class="form-control" id="snippet" name="snippet" th:value="${thePost.getSnippet()}"/>
     </div>
     <div class="form-group">
         <label th:for="postImage">Item Image:</label>
         <input class="form-control" type="file" id="postImage" name="postImage"/>
     </div>
-
-    <input type="submit" value="Add Title" class="btn btn-info"/>
+    <input class="form-control" type="hidden" id="post_id" name="post_id" th:value="${thePost.getId()}"/>
+    <input type="submit" value="Edit Post" class="btn btn-info"/>
 </form>
 
 </body>

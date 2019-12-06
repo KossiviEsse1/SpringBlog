@@ -98,7 +98,7 @@ public class AnimePost {
         return s;
     }
 
-    @OneToMany(mappedBy="animePost")
+    @OneToMany(mappedBy="animePost", orphanRemoval = true, cascade = CascadeType.PERSIST)
     private List<Comments> comments = new ArrayList<>();
 
     public User getUser() {

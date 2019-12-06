@@ -2,7 +2,9 @@ package org.koko.kokoprojectone.models;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 @Entity
 public class Comments {
@@ -62,5 +64,12 @@ public class Comments {
     @ManyToOne
     @JoinColumn(name="user_id", nullable=false)
     private User user;
+
+    public String dateFormat(){
+        String pattern = "dd MMM yyyy";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern,new Locale("en", "US"));
+        String dat = simpleDateFormat.format(date);
+        return dat;
+    }
 
 }

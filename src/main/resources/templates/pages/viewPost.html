@@ -11,37 +11,83 @@
     <h1 th:text="${post.title}"></h1>
     <p th:text="'By '+${post.getUser().getUsername()}"></p><hr/>
     <p th:text="'Written on '+${post.dateFormat()}"></p><hr/>
+    <div th:switch="${post.getUser().getUsername()}">
+        <div th:case="${#authentication.name}">
+            <a class="btn btn-info" th:href="'/edit/'+${post.getId()}">Edit</a>
+            <span><a class="btn btn-info" th:href="'/delete/'+${post.getId()}">Delete</a></span>
+        </div>
+        <div th:case="*"></div>
+    </div>
+<!--    <button type="submit" th:formaction="'/edit'+${post.getId()}" class="btn btn-info">Edit</button>-->
     <div>
         <p class="text-justify" style="white-space: pre-line;" th:text="${post.description}"></p>
     </div>
 </div>
 
 
-    <div class="container">
-        <div class="comments-box">
-            <p sec:authorize="isAnonymous()">
-                <h4 sec:authorize="isAnonymous()"><a href="/login">Login</a> to Comment</h4>
-            </p>
-            <div class="form-group shadow-textarea" sec:authorize="isAuthenticated()">
-                <form method="post" style="max-width:600px;" action="/comment">
-                    <div class="form-group">
-                        <label th:for="words"><h3 class="mb-2">Comments</h3></label>
-                        <textarea class="form-control z-depth-1" id="words" name="words" rows="3"></textarea>
-                    </div>
-                    <input class="form-control" type="hidden" id="post_id" name="post_id" th:value="${post.id}"/>
-                    <input type="submit" value="Comment!"/>
-                </form>
-            </div>
+<!--    <div class="container">-->
+<!--        <div class="comment-wrapper">-->
+<!--            <p sec:authorize="isAnonymous()">-->
+<!--                <h4 sec:authorize="isAnonymous()"><a href="/login">Login</a> to Comment</h4>-->
+<!--            </p>-->
+<!--            <div class="form-group shadow-textarea" sec:authorize="isAuthenticated()">-->
+<!--                <form method="post" style="max-width:600px;" action="/comment">-->
+<!--                    <div class="form-group">-->
+<!--                        <label th:for="words"><h3 class="mb-2">Comments</h3></label>-->
+<!--                        <textarea class="form-control z-depth-1" id="words" name="words" rows="3"></textarea>-->
+<!--                    </div>-->
+<!--                    <input class="form-control" type="hidden" id="post_id" name="post_id" th:value="${post.id}"/>-->
+<!--                    <input type="submit" value="Comment!"/>-->
+<!--                </form>-->
+<!--            </div>-->
 
-            <div th:each="comment,iterStat : ${comments}">
-                <div th:switch="${comment.getAnimePost().getId()}">
-                    <div class="media-body border-bottom mb-5" th:case="${post.id}"><p class="card-text" th:text="${comment.getComment()}"></p></div>
-                    <div th:case="*"></div>
+<!--            <div th:each="comment,iterStat : ${comments}">-->
+<!--                <div th:switch="${comment.getAnimePost().getId()}">-->
+<!--                    <div class="media-body border-bottom mb-5" th:case="${post.id}"><p class="card-text" th:text="${comment.getComment()}"></p></div>-->
+<!--                    <div th:case="*"></div>-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--        </div>-->
+<!--    </div>-->
+
+<div class="row bootstrap snippets">
+    <div class="col-md-6 col-md-offset-2 col-sm-12">
+        <div class="comment-wrapper">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <p sec:authorize="isAnonymous()"><h4 sec:authorize="isAnonymous()"><a href="/login">Login</a> to Comment</h4></p>
+                    <h3 sec:authorize="isAuthenticated()" class="mb-2">Comments</h3>
+                </div>
+                <div class="panel-body">
+                    <form method="post" style="max-width:600px;" action="/comment" sec:authorize="isAuthenticated()">
+                        <div class="form-group">
+                            <textarea class="form-control z-depth-1" id="words" name="words" rows="3"></textarea>
+                        </div>
+                        <input class="form-control" type="hidden" id="post_id" name="post_id" th:value="${post.id}"/>
+                        <input type="submit" value="Comment!" class="btn btn-info pull-right"/>
+                    </form>
+                    <hr/>
+                    <br/>
+                    <div class="media-list">
+                        <div th:each="comment,iterStat : ${comments}" class=“media”>
+                            <div th:switch="${comment.getAnimePost().getId()}" class=“media-body”>
+                                <div class="media-body border-bottom mb-5" th:case="${post.id}">
+                                    <strong class="text-success" th:text="'@'+${comment.getUser().getUsername()}"></strong>
+                                    <span class="text-muted pull-left">
+                                    <small class="text-muted" th:text="${comment.dateFormat()}"></small>
+                                    </span>
+                                    <p class="card-text" th:text="${comment.getComment()}"></p>
+                                </div>
+                                <div th:case="*"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-
         </div>
     </div>
+</div>
 
 </body>
 </html>

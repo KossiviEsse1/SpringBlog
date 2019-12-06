@@ -131,6 +131,38 @@ public class HomeController {
             return "users/login";
         }
 
+    @RequestMapping(value="edit/{postId}", method = RequestMethod.GET)
+    public String displayEditForm(Model model, @PathVariable int postId){
+        AnimePost thePost = animePostDao.findById(postId).get();
+        model.addAttribute("thePost", thePost);
+        model.addAttribute(new AnimePost());
+        return "pages/edit";
+    }
+
+    @RequestMapping(value="edit", method=RequestMethod.POST)
+    public String processEditForm(@RequestParam(value="post_id") int post_id, @RequestParam(value="title") String title, @RequestParam(value="description") String description, @RequestParam(value="postImage") MultipartFile file, @RequestParam(value="snippet") String snippet, Model model) throws IOException{
+        AnimePost thePost = animePostDao.findById(post_id).get();
+        if(!file.isEmpty()){
+            byte [] img = file.getBytes();
+            thePost.setTitle(title);
+            thePost.setDescription(description);
+            thePost.setSnippet(snippet);
+            thePost.setPostImage(img);
+            animePostDao.save(thePost);
+        }
+        thePost.setTitle(title);
+        thePost.setDescription(description);
+        thePost.setSnippet(snippet);
+        animePostDao.save(thePost);
+        return "redirect:";
+    }
+
+    @RequestMapping(value="delete/{postId}", method = RequestMethod.GET)
+    public String deleteAnimePost(Model model, @PathVariable int postId){
+        animePostDao.delete(animePostDao.findById(postId).get());
+        return "pages/index";
+    }
+
 
 
 
