@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th= "http://www.thymeleaf.org/" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments :: head"></head>
+<body class="container">
+<nav th:replace="fragments :: navigation"></nav>
+<div class="jumbotron">
+    <h1 class="display-3">Anime Life</h1>
+    <p class="lead" th:unless="${posts} and ${posts.size()}">No Posts Yet</p>
+</div>
+
+<div class="row">
+    <div class="col-6 col-md-4" th:each="post : ${posts}">
+        <div class="card " style="width: 18rem; padding-left: 0px;  padding-right: 0px;">
+<!--            <img src="..." class="card-img-top" alt="...">-->
+            <img th:src="@{'data:image/png;base64,'+${post.getImageString()}}" class="img-fluid" alt="Our Mistake"/>
+            <div class="card-body">
+                <h5 class="card-title"><a th:href="@{'/view/' + ${post.id}}" th:text="${post.title}"></a></h5>
+                <p class="card-text" th:text="${post.getSnippet()}"></p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>

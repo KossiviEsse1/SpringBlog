@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments :: head"></head>
+<body class="container">
+<nav th:replace="fragments :: navigation"></nav>
+<h1 th:text="${title}">Default Title</h1>
+
+<form method="post" style="max-width:600px;" enctype="multipart/form-data">
+    <div class="form-group">
+        <label th:for="title">Title:</label>
+        <input class="form-control" id="title" name="title"/>
+    </div>
+    <div class="form-group">
+        <label th:for="description">Description:</label>
+        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+    </div>
+    <div class="form-group">
+        <label th:for="snippet">Snippet:</label>
+        <input class="form-control" id="snippet" name="snippet"/>
+    </div>
+    <div class="form-group">
+        <label th:for="postImage">Item Image:</label>
+        <input class="form-control" type="file" id="postImage" name="postImage"/>
+    </div>
+
+    <input type="submit" value="Add Title"/>
+</form>
+
+</body>
+</html>
