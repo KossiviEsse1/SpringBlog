@@ -1,0 +1,6 @@
+applications:
+- name: koko-project-one
+  buildpack: java_buildpack
+  path: build/libs/koko-project-one-0.0.1-SNAPSHOT.jar
+  services:
+    - koko-project-one-db
