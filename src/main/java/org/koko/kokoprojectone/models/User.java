@@ -93,4 +93,7 @@ public class User {
 
     @OneToMany(mappedBy="user")
     private List<AnimePost> animePosts = new ArrayList<>();
+
+    @OneToMany(mappedBy="user")
+    private List<Likes> likes = new ArrayList<>();
 }

@@ -3,7 +3,8 @@
 <head th:fragment="head">
     <meta charset="UTF-8"/>
     <title th:text="${title}">Default Title</title>
-
+    <link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}"/>
+<!--          href="src/main/resources/static/css/styles.css"/>-->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
     <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </head>
@@ -17,6 +18,10 @@
             <li class="nav-item" sec:authorize="isAnonymous()"><a class="nav-link" href="/register">Create Account</a></li>
             <li class="nav-item" sec:authorize="isAuthenticated()"><a class="nav-link" href="/logout">Logout</a></li>
         </ul>
+        <form class="form-inline my-2 my-lg-0" action="/search" method="post">
+            <input class="form-control mr-sm-2" id="search" name="search" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
     </nav>
 </div>
 

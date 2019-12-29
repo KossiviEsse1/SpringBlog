@@ -8,15 +8,18 @@
 <form method="post" style="max-width:600px;" enctype="multipart/form-data">
     <div class="form-group">
         <label th:for="title">Title:</label>
-        <input class="form-control" id="title" name="title"/>
+        <input class="form-control" id="title" name="title" th:value="${anime.getTitle()}"/>
+        <span><p th:text="${titleerrors}" class="error"></p></span>
     </div>
     <div class="form-group">
         <label th:for="description">Description:</label>
-        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+        <textarea class="form-control" id="description" name="description" rows="3" th:text="${anime.getDescription()}"></textarea>
+        <span><p th:text="${descriptionerrors}" class="error"></p></span>
     </div>
     <div class="form-group">
         <label th:for="snippet">Snippet:</label>
-        <input class="form-control" id="snippet" name="snippet"/>
+        <input class="form-control" id="snippet" name="snippet" th:value="${anime.getSnippet()}"/>
+        <span><p th:text="${snippeterrors}" class="error"></p></span>
     </div>
     <div class="form-group">
         <label th:for="postImage">Item Image:</label>

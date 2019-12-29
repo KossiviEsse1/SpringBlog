@@ -3,14 +3,14 @@
 <head th:replace="fragments :: head"></head>
 <body>
 <div class="container">
-<nav th:replace="fragments :: navigation"></nav>
-<div class="jumbotron">
-    <h1 class="display-3">Good Media Blog Site</h1>
-    <p class="lead" th:unless="${posts} and ${posts.size()}">No Posts Yet</p>
-</div>
+    <nav th:replace="fragments :: navigation"></nav>
+    <div class="jumbotron">
+        <h1 class="display-3" th:text="'Results for '+${what}"></h1>
+        <p class="lead" th:unless="${posts} and ${posts.size()}">No Search Results</p>
+    </div>
     <div class="row">
         <div class="col-6 col-md-4" th:each="post : ${posts}">
-            <div class="card mt-5">
+            <div class="card">
                 <div class="wrapper">
                     <img th:src="@{'data:image/png;base64,'+${post.getImageString()}}" class="card-img-top img-fluid" alt="Our Mistake"/>
                 </div>

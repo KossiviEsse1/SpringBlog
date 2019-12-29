@@ -10,8 +10,7 @@ import java.util.*;
 @Entity
 public class AnimePost {
 
-    public AnimePost(int id, String title, String description, byte[] postImage, String snippet) {
-        this.id = id;
+    public AnimePost(String title, String description, byte[] postImage, String snippet) {
         this.title = title;
         this.description = description;
         this.postImage = postImage;
@@ -66,6 +65,7 @@ public class AnimePost {
         this.snippet = snippet;
     }
 
+    @Size(max=50)
     private String snippet;
 
     public String getDescription() {
@@ -112,4 +112,11 @@ public class AnimePost {
     @ManyToOne
     @JoinColumn(name="user_id", nullable=false)
     private User user;
+
+    @OneToMany(mappedBy="animePost", orphanRemoval = true)
+    private List<Likes> likes = new ArrayList<>();
+
+    public List<Likes> getLikes() {
+        return likes;
+    }
 }

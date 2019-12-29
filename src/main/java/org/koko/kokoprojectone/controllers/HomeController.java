@@ -1,12 +1,10 @@
 package org.koko.kokoprojectone.controllers;
 
 
-import org.koko.kokoprojectone.models.AnimePost;
-import org.koko.kokoprojectone.models.Comments;
-import org.koko.kokoprojectone.models.MyUserDetails;
-import org.koko.kokoprojectone.models.User;
+import org.koko.kokoprojectone.models.*;
 import org.koko.kokoprojectone.models.data.AnimePostDao;
 import org.koko.kokoprojectone.models.data.CommentsDao;
+import org.koko.kokoprojectone.models.data.LikesDao;
 import org.koko.kokoprojectone.models.data.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -21,7 +19,9 @@ import org.springframework.*;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 @Controller
@@ -38,6 +38,9 @@ public class HomeController {
     UserDao userDao;
 
     @Autowired
+    LikesDao likesDao;
+
+    @Autowired
     PasswordEncoder passwordEncoder;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -51,16 +54,48 @@ public class HomeController {
     public String displayAddPostForm(Model model){
         model.addAttribute("title", "Add Anime Post");
         model.addAttribute("anime", new AnimePost());
+        model.addAttribute("titleerrors", "");
+        model.addAttribute("descriptionerrors", "");
+        model.addAttribute("snippeterrors", "");
         return "pages/add";
     }
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
     //@ModelAttribute @Valid AnimePost newAnime,
-    public String processAddPostForm( @RequestParam(value="title") String title, @RequestParam(value="description") String description, @RequestParam(value="postImage") MultipartFile file, @RequestParam(value="snippet") String snippet, Model model) throws IOException {
-//        if(errors.hasErrors()){
-//            model.addAttribute("title", "Add Anime Post");
-//            return "pages/add";
-//        }
+    public String processAddPostForm(
+            @RequestParam(value="title") String title,
+            @RequestParam(value="description") String description,
+            @RequestParam(value="postImage") MultipartFile file,
+            @RequestParam(value="snippet") String snippet,
+            Model model) throws IOException {
+        String titleerrors = "";
+        String descriptionerrors = "";
+        String snippeterrors = "";
+        int count=0;
+        if (title.length() > 25 || title.length() < 3) {
+            titleerrors = "Title must be between 3 and 25 Characters long";
+            count++;
+        }
+        if (description.length() < 1 || description.length() > 100000) {
+            descriptionerrors = "Description must be between 1 and 100000 Characters";
+            count++;
+        }
+        if (snippet.length() > 50) {
+            snippeterrors = "Must be less than 50 Characters";
+            count++;
+        }
+        model.addAttribute("titleerrors", titleerrors);
+        model.addAttribute("descriptionerrors", descriptionerrors);
+        model.addAttribute("snippeterrors", snippeterrors);
+        model.addAttribute("title", "Add Anime Post");
+        if(count>0){
+            AnimePost anime = new AnimePost();
+            anime.setSnippet(snippet);
+            anime.setDescription(description);
+            anime.setTitle(title);
+            model.addAttribute("anime", anime);
+            return "pages/add";
+        }
         byte [] img = file.getBytes();
         AnimePost newAnime = new AnimePost();
         newAnime.setTitle(title);
@@ -160,6 +195,53 @@ public class HomeController {
     @RequestMapping(value="delete/{postId}", method = RequestMethod.GET)
     public String deleteAnimePost(Model model, @PathVariable int postId){
         animePostDao.delete(animePostDao.findById(postId).get());
+        model.addAttribute("title", "Home");
+        model.addAttribute("posts", animePostDao.findAll());
+        return "pages/index";
+    }
+
+    @RequestMapping(value="/search", method = RequestMethod.POST)
+    public String search(@RequestParam(value="search") String search, Model model){
+        List<AnimePost> posts = (List<AnimePost>) animePostDao.findAll();
+        List<AnimePost> results = new ArrayList<>();
+        for(AnimePost item: posts){
+            if(item.getTitle().toLowerCase().contains(search.toLowerCase())){
+                results.add(item);
+            }
+            else if(item.getSnippet().toLowerCase().contains(search.toLowerCase())){
+                results.add(item);
+            }
+            else if(item.getDescription().toLowerCase().contains(search.toLowerCase())){
+                results.add(item);
+            }
+        }
+        model.addAttribute("title", "Search");
+        search = "'"+search+"'";
+        model.addAttribute("what", search);
+        model.addAttribute("posts", results);
+        return "pages/search";
+    }
+
+    @RequestMapping(value="/like", method = RequestMethod.POST)
+    public String like(@RequestParam(value="postId") int postId, Model model){
+        AnimePost post = animePostDao.findById(postId).get();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        MyUserDetails myUserDetails = (MyUserDetails)authentication.getPrincipal();
+        User user = userDao.findByUsername(myUserDetails.getUsername()).get();
+
+        for(Likes lik : post.getLikes()){
+            if(lik.getAnimePost()== post && lik.getUser()==user){
+                likesDao.delete(likesDao.findById(lik.getId()).get());
+                model.addAttribute("title", "Home");
+                model.addAttribute("posts", animePostDao.findAll());
+                return "pages/index";
+            }
+        }
+
+        Likes like = new Likes(user, post);
+        likesDao.save(like);
+        model.addAttribute("title", "Home");
+        model.addAttribute("posts", animePostDao.findAll());
         return "pages/index";
     }
 
